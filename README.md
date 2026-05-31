@@ -179,6 +179,7 @@ diaryWin->show();
 DiaryViewWindow *viewWin = new DiaryViewWindow(parent);
 viewWin->loadDiary("2026-05-24", htmlContent);
 viewWin->show();
+```
 6.	常见问题
 ·图片不显示：检查图片路径是否有效
 ·格式丢失：自动保存仅在正常关闭情况下执行，确认关闭前程序未崩溃
