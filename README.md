@@ -6,7 +6,7 @@
 `year`：年份，如 2026
 `month`：月份，1-12
 返回值：`QVector<QPair<QString, QVector3D>>`
-示例：
+```cpp
 #include "mainwindow.h"
 MainWindow mainWindow = new MainWindow();
 auto data = mainWindow->getMonthData(2026, 5);
