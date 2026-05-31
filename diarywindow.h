@@ -51,6 +51,9 @@ private:
     QPushButton *m_strikeOutBtn;
     QPushButton *m_imageBtn;
 
+    QPushButton *m_undoBtn;
+    QPushButton *m_redoBtn;
+
     QString m_currentDate;
 };
 

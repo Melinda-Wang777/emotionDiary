@@ -40,6 +40,9 @@ DiaryWindow::DiaryWindow(QWidget *parent)
         m_underlineBtn->setChecked(fmt.fontUnderline());
         m_strikeOutBtn->setChecked(fmt.fontStrikeOut());
     });
+
+    connect(m_undoBtn, &QPushButton::clicked, m_textEdit, &QTextEdit::undo);
+    connect(m_redoBtn, &QPushButton::clicked, m_textEdit, &QTextEdit::redo);
 }
 
 DiaryWindow::~DiaryWindow() {}
@@ -107,6 +110,13 @@ void DiaryWindow::setupToolBar()
 
     m_imageBtn = new QPushButton("插入图片", this);
     m_toolBar->addWidget(m_imageBtn);
+    //添加撤销/恢复按钮
+    m_toolBar->addSeparator();
+
+    m_undoBtn = new QPushButton("↩️ 撤销", this);
+    m_redoBtn = new QPushButton("↪️ 恢复", this);
+    m_toolBar->addWidget(m_undoBtn);
+    m_toolBar->addWidget(m_redoBtn);
 
     connect(m_fontCombo, &QFontComboBox::currentFontChanged, this, &DiaryWindow::onFontChanged);
     connect(m_fontSizeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
