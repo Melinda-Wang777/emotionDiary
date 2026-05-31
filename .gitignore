@@ -1,0 +1,26 @@
+# Qt编译产物
+build-*/
+*.pro.user
+*.pro.user.*
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+Makefile
+Makefile.*
+
+# 编译中间文件
+*.o
+*.obj
+*.moc
+*.rcc
+*.qm
+
+# IDE相关
+.qtc_clangd/
+.vs/
+*.swp
+*~
+
+# 可执行文件
+*.exe
+*.app
