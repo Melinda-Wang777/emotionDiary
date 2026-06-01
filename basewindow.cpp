@@ -3,10 +3,9 @@
 #include <QRandomGenerator>
 
 BaseWindow::BaseWindow(QWidget *parent)
-    : QWidget(parent)  // 调用 QWidget 的构造函数
+    : QWidget(parent)
 {
     setAttribute(Qt::WA_StyledBackground, true);
-    // 默认极简水彩渐变
     m_gradColor1 = QColor(248, 245, 240);
     m_gradColor2 = QColor(235, 225, 215);
 }

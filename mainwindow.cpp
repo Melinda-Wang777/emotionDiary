@@ -100,7 +100,7 @@ MainWindow::MainWindow(QWidget *parent)
     mainLayout->addWidget(titleLabel);
 
     QLabel *subtitleLabel = new QLabel(this);
-    subtitleLabel->setText("记录你每一天的心情");
+    subtitleLabel->setText("—— 记录你每一天的心情 ——");
     subtitleLabel->setAlignment(Qt::AlignCenter);
 
     QFont subtitleFont("KaiTi", 14);
@@ -116,19 +116,19 @@ MainWindow::MainWindow(QWidget *parent)
 
     mainLayout->addStretch();
 
-    m_recordBtn = new QPushButton("记录每日情绪️", this);
-    m_recordBtn->setFixedHeight(50);
-    m_recordBtn->setFixedWidth(300);
+    m_recordBtn = new QPushButton("记 录 每 日 情 绪️", this);
+    m_recordBtn->setFixedHeight(40);
+    m_recordBtn->setFixedWidth(250);
     mainLayout->addWidget(m_recordBtn, 0, Qt::AlignCenter);
 
-    m_calendarBtn = new QPushButton("查看月度情绪", this);
-    m_calendarBtn->setFixedHeight(50);
-    m_calendarBtn->setFixedWidth(300);
+    m_calendarBtn = new QPushButton("查 看 月 度 情 绪", this);
+    m_calendarBtn->setFixedHeight(40);
+    m_calendarBtn->setFixedWidth(250);
     mainLayout->addWidget(m_calendarBtn, 0, Qt::AlignCenter);
 
-    m_lineChartsBtn = new QPushButton("查看月度趋势", this);
-    m_lineChartsBtn->setFixedHeight(50);
-    m_lineChartsBtn->setFixedWidth(300);
+    m_lineChartsBtn = new QPushButton("查 看 月 度 趋 势", this);
+    m_lineChartsBtn->setFixedHeight(40);
+    m_lineChartsBtn->setFixedWidth(250);
     mainLayout->addWidget(m_lineChartsBtn, 0, Qt::AlignCenter);
 
     mainLayout->addStretch();
@@ -139,17 +139,17 @@ MainWindow::MainWindow(QWidget *parent)
 
     central->setStyleSheet(
         "QPushButton {"
-        "  background-color: transparent;"
-        "  color: #2C2C2C;"
+        "  background-color: black;"
+        "  color: #FFFFFF;"
         "  border: 4px solid #2C2C2C;"
-        "  font-family: 'STKaiti';"
-        "  font-size: 24px;"
-        "  font-weight: bold;"
+        "  font-family: 'SimSun';"
+        "  font-size: 18px;"
+        "  font-weight: normal;"
         "  padding: 10px 20px;"
         "  min-height: 40px;"
         "}"
         "QPushButton:hover {"
-        "  background-color: rgba(44, 44, 44, 0.1);"
+        "  background-color: rgba(44, 44, 44, 0.9);"
         "}"
         );
 

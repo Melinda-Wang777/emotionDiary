@@ -12,8 +12,6 @@
 LineChartsWindow::LineChartsWindow(MainWindow *mw, QWidget *parent)
     : BaseWindow(parent), m_mainwindow(mw)
 {
-    setBackgroundImage(":/images/bg_chart.jpg");
-    //setGradientBackground(QColor(245, 245, 240), QColor(235, 230, 225));
     setWindowTitle("情绪趋势分析");
     resize(900, 550);
 
@@ -21,16 +19,14 @@ LineChartsWindow::LineChartsWindow(MainWindow *mw, QWidget *parent)
     QHBoxLayout *controlLayout = new QHBoxLayout();
 
     QLabel *dimensionLabel = new QLabel("选择维度：", this);
-    dimensionLabel->setStyleSheet("font-size: 14px; font-weight: bold; color: #4A90D9;");
 
     m_dimensionCombo = new QComboBox(this);
-    m_dimensionCombo->addItem("愉悦度 (P) - 难过 ← → 开心");
-    m_dimensionCombo->addItem("唤醒度 (A) - 平静 ← → 兴奋");
-    m_dimensionCombo->addItem("支配度 (D) - 无力 ← → 掌控");
-    m_dimensionCombo->addItem("全部维度 (P+A+D) - 对比显示");
+    m_dimensionCombo->addItem("愉悦度（P） 难过 ← → 开心");
+    m_dimensionCombo->addItem("唤醒度（A） 平静 ← → 兴奋");
+    m_dimensionCombo->addItem("支配度（D） 无力 ← → 掌控");
+    m_dimensionCombo->addItem("全部维度（P+A+D） 对比显示");
 
     QLabel *yearLabel = new QLabel("年份:", this);
-    yearLabel->setStyleSheet("font-size: 14px; font-weight: bold; color: #4A90D9;");
 
     m_yearSpin = new QSpinBox(this);
     m_yearSpin->setRange(2000, 2100);
@@ -38,7 +34,6 @@ LineChartsWindow::LineChartsWindow(MainWindow *mw, QWidget *parent)
     m_yearSpin->setFixedWidth(100);
 
     QLabel *monthLabel = new QLabel("月份:", this);
-    monthLabel->setStyleSheet("font-size: 14px; font-weight: bold; color: #4A90D9;");
 
     m_monthCombo = new QComboBox(this);
     for (int m = 1; m <= 12; ++m) {
@@ -47,17 +42,54 @@ LineChartsWindow::LineChartsWindow(MainWindow *mw, QWidget *parent)
     m_monthCombo->setCurrentIndex(QDate::currentDate().month() - 1);
     m_monthCombo->setFixedWidth(100);
 
-    QPushButton *refreshBtn = new QPushButton("刷新", this);
-    refreshBtn->setFixedWidth(80);
+    QPushButton *refreshBtn = new QPushButton("刷 新", this);
+    refreshBtn->setFixedWidth(65);
     refreshBtn->setStyleSheet(
         "QPushButton {"
-        "  background: qlineargradient(x1:0, y1:0, x2:1, y2:0,"
-        "    stop:0 #4A90D9, stop:1 #6AB0F0);"
-        "  color: white; border: none; border-radius: 8px;"
-        "  padding: 6px 12px; font-weight: bold;"
+        "  background-color: black;"
+        "  color: #FFFFFF;"
+        "  border: 2px solid #2C2C2C;"
+        "  font-family: 'SimSun';"
+        "  font-size: 16px;"
+        "  font-weight: normal;"
+        "  padding: 6px 12px;"
         "}"
-        "QPushButton:hover { background: qlineargradient(x1:0, y1:0, x2:1, y2:0,"
-        "    stop:0 #3A80C9, stop:1 #5AA0E0);"
+        "QPushButton:hover {"
+        "  background-color: rgba(44, 44, 44, 0.9);"
+        "}"
+        );
+
+    dimensionLabel->setStyleSheet("font-family: 'SimSun'; font-size: 14px; color: #2C2C2C; font-weight: bold; background: transparent;");
+    yearLabel->setStyleSheet("font-family: 'SimSun'; font-size: 14px; color: #2C2C2C; font-weight: bold; background: transparent;");
+    monthLabel->setStyleSheet("font-family: 'SimSun'; font-size: 14px; color: #2C2C2C; font-weight: bold; background: transparent;");
+
+    m_dimensionCombo->setStyleSheet(
+        "QComboBox {"
+        "  border: 1px solid #2C2C2C;"
+        "  padding: 4px 8px;"
+        "  background-color: white;"
+        "  color: #333;"
+        "  font-size: 12px;"
+        "}"
+        );
+
+    m_yearSpin->setStyleSheet(
+        "QSpinBox {"
+        "  border: 1px solid #2C2C2C;"
+        "  padding: 4px 8px;"
+        "  background-color: white;"
+        "  color: #333;"
+        "  font-size: 12px;"
+        "}"
+        );
+
+    m_monthCombo->setStyleSheet(
+        "QComboBox {"
+        "  border: 1px solid #2C2C2C;"
+        "  padding: 4px 8px;"
+        "  background-color: white;"
+        "  color: #333;"
+        "  font-size: 12px;"
         "}"
         );
 
@@ -73,8 +105,12 @@ LineChartsWindow::LineChartsWindow(MainWindow *mw, QWidget *parent)
     m_titleLabel = new QLabel(this);
     m_titleLabel->setAlignment(Qt::AlignCenter);
     m_titleLabel->setStyleSheet(
-        "font-size: 16px; font-weight: bold; color: #4A90D9;"
-        "background-color: rgba(168, 216, 234, 0.3); border-radius: 8px; padding: 6px;"
+        "font-family: 'SimSun';"
+        "font-size: 16px;"
+        "font-weight: bold;"
+        "color: #2C2C2C;"
+        "background-color: rgba(255, 255, 255, 0);"
+        "padding: 6px;"
         );
 
     mainLayout->addLayout(controlLayout);
@@ -88,23 +124,6 @@ LineChartsWindow::LineChartsWindow(MainWindow *mw, QWidget *parent)
     connect(m_monthCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, &LineChartsWindow::refreshData);
     connect(refreshBtn, &QPushButton::clicked, this, &LineChartsWindow::refreshData);
-
-    this->setStyleSheet(
-        "LineCharts {"
-        "  background: qlineargradient(x1:0, y1:0, x2:1, y2:1,"
-        "    stop:0 #E8F4F8, stop:1 #F0E8F4);"
-        "}"
-        "QComboBox {"
-        "  border: 2px solid #A8D8EA; border-radius: 8px; padding: 6px 12px;"
-        "  background-color: white; color: #333; font-size: 13px; min-width: 180px;"
-        "}"
-        "QComboBox:hover { border-color: #4A90D9; }"
-        "QSpinBox {"
-        "  border: 2px solid #A8D8EA; border-radius: 8px; padding: 6px 12px;"
-        "  background-color: white; color: #333; font-size: 13px;"
-        "}"
-        "QSpinBox:hover { border-color: #4A90D9; }"
-        );
 
     setLayout(mainLayout);
     refreshData();
@@ -126,16 +145,16 @@ void LineChartsWindow::refreshData()
 
 void LineChartsWindow::updateTitle()
 {
-    QString dimName[] = {"愉悦度 (P)", "唤醒度 (A)", "支配度 (D)", "P+A+D (全部)"};
-    QString monthText = QString("%1年 %2月").arg(m_yearSpin->value())
+    QString dimName[] = {"愉悦度(P)", "唤醒度(A)", "支配度(D)", "全部维度（P+A+D）"};
+    QString monthText = QString("%1年%2月").arg(m_yearSpin->value())
                             .arg(m_monthCombo->currentData().toInt());
 
     if (m_data.isEmpty()) {
-        m_titleLabel->setText(QString("%1 - %2 趋势图 (暂无数据)")
+        m_titleLabel->setText(QString("%1 %2趋势图（暂无数据）")
                                   .arg(monthText)
                                   .arg(dimName[m_currentDimension]));
     } else {
-        m_titleLabel->setText(QString("%1 - %2 趋势图")
+        m_titleLabel->setText(QString("%1 %2趋势图")
                                   .arg(monthText)
                                   .arg(dimName[m_currentDimension]));
     }
@@ -205,7 +224,7 @@ void LineChartsWindow::drawLegend(QPainter &painter, int yOffset)
         };
     } else {
         QColor colors[] = {QColor(255, 100, 100), QColor(100, 200, 100), QColor(100, 100, 255)};
-        QString names[] = {"愉悦度 (P)", "唤醒度 (A)", "支配度 (D)"};
+        QString names[] = {"愉悦度(P)", "唤醒度(A)", "支配度(D)"};
         legends = {{names[m_currentDimension], colors[m_currentDimension], m_currentDimension}};
     }
 
@@ -214,12 +233,15 @@ void LineChartsWindow::drawLegend(QPainter &painter, int yOffset)
     int itemHeight = 25;
 
     painter.save();
-    painter.setOpacity(0.9);
-    painter.setBrush(QBrush(QColor(255, 255, 255, 200)));
-    painter.setPen(QPen(QColor(168, 216, 234), 1));
+    painter.setOpacity(0.85);
+    painter.setBrush(Qt::NoBrush);
+    painter.setPen(Qt::NoPen);
 
     int legendHeight = legends.size() * itemHeight + 10;
-    painter.drawRoundedRect(legendX - 10, legendY - 5, 120, legendHeight, 8, 8);
+    painter.drawRect(legendX - 15, legendY - 5, 120, legendHeight);
+
+    QFont legendFont("SimSun", 10);
+    painter.setFont(legendFont);
 
     for (int i = 0; i < legends.size(); i++) {
         int y = legendY + i * itemHeight;
@@ -230,7 +252,7 @@ void LineChartsWindow::drawLegend(QPainter &painter, int yOffset)
         painter.setBrush(QBrush(legends[i].color));
         painter.drawEllipse(legendX + 8, y + 6, 8, 8);
 
-        painter.setPen(QPen(QColor(80, 80, 80), 1));
+        painter.setPen(QPen(QColor(44, 44, 44), 1));
         painter.drawText(legendX + 25, y, 80, 20, Qt::AlignLeft, legends[i].name);
     }
 
@@ -242,6 +264,16 @@ void LineChartsWindow::paintEvent(QPaintEvent *event)
     Q_UNUSED(event);
 
     QPainter painter(this);
+    QPixmap bg(":/images/bg_chart.jpg");
+    if (!bg.isNull()) {
+        QPixmap scaled = bg.scaled(size(), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+        painter.drawPixmap(0, 0, scaled);
+    } else {
+        QLinearGradient gradient(0, 0, width(), height());
+        gradient.setColorAt(0, QColor(248, 245, 240));
+        gradient.setColorAt(1, QColor(235, 225, 215));
+        painter.fillRect(rect(), gradient);
+    }
     painter.setRenderHint(QPainter::Antialiasing, true);
 
     calculateLayout();
@@ -257,7 +289,7 @@ void LineChartsWindow::paintEvent(QPaintEvent *event)
         updateTitle();
     }
 
-    painter.setPen(QPen(QColor(168, 216, 234), 2));
+    painter.setPen(QPen(QColor(44, 44, 44), 2));
     painter.setBrush(Qt::NoBrush);
     painter.drawRect(m_leftMargin, m_topMargin, m_chartWidth, m_chartHeight);
 
@@ -270,7 +302,7 @@ void LineChartsWindow::paintEvent(QPaintEvent *event)
         int yValue = 255 - i * 51;
         double y = m_topMargin + m_chartHeight * i / 5.0;
         painter.drawLine(m_leftMargin - 5, y, m_leftMargin + m_chartWidth, y);
-        painter.setPen(QPen(QColor(100, 100, 100), 1));
+        painter.setPen(QPen(QColor(44, 44, 44), 1));
         painter.drawText(m_leftMargin - 50, y - 5, 45, 20, Qt::AlignRight, QString::number(yValue));
         painter.setPen(QPen(QColor(200, 200, 200), 1, Qt::DotLine));
     }
@@ -311,7 +343,7 @@ void LineChartsWindow::paintEvent(QPaintEvent *event)
                 }
             }
 
-            painter.setPen(QPen(QColor(100, 100, 100), 1));
+            painter.setPen(QPen(QColor(44, 44, 44), 1));
             if (labelInterval > 1) {
                 font.setPointSize(8);
             } else {
@@ -325,13 +357,13 @@ void LineChartsWindow::paintEvent(QPaintEvent *event)
         }
     }
 
-    painter.setPen(QPen(QColor(80, 80, 80), 1));
-    painter.drawText(m_leftMargin + m_chartWidth / 2 - 30, height() - 15, 60, 20,
+    painter.setPen(QPen(QColor(44, 44, 44), 1));
+    painter.drawText(m_leftMargin + m_chartWidth / 2 - 30, height() - 35, 60, 20,
                      Qt::AlignCenter, "日期");
     painter.save();
     painter.translate(20, height() / 2);
     painter.rotate(-90);
-    painter.drawText(-30, 0, 60, 20, Qt::AlignCenter, "情绪值 (0-255)");
+    painter.drawText(-30, 0, 60, 20, Qt::AlignCenter, "情绪值");
     painter.restore();
 
     QColor colors[] = {QColor(255, 100, 100), QColor(100, 200, 100), QColor(100, 100, 255)};
@@ -361,7 +393,9 @@ void LineChartsWindow::paintEvent(QPaintEvent *event)
                 painter.drawEllipse(point, 5, 5);
             }
         }
-    } else {
+    }
+
+    else {
         QPen linePen(colors[m_currentDimension], 3);
         linePen.setCapStyle(Qt::RoundCap);
         linePen.setJoinStyle(Qt::RoundJoin);
@@ -379,24 +413,12 @@ void LineChartsWindow::paintEvent(QPaintEvent *event)
             QPointF point = getPoint(i, m_currentDimension);
             if (point.x() < 0) continue;
 
-            int value;
-            switch (m_currentDimension) {
-            case 0: value = m_data[i].second.x(); break;
-            case 1: value = m_data[i].second.y(); break;
-            case 2: value = m_data[i].second.z(); break;
-            }
-
             QColor pointColor = colors[m_currentDimension];
             pointColor.setAlpha(180);
             painter.setPen(QPen(colors[m_currentDimension].darker(150), 2));
             painter.setBrush(QBrush(pointColor));
-            painter.drawEllipse(point, 6, 6);
-
-            painter.setPen(QPen(QColor(60, 60, 60), 1));
-            font.setPointSize(8);
-            painter.setFont(font);
-            painter.drawText(point.x() - 10, point.y() - 8, 20, 15, Qt::AlignCenter, QString::number(value));
+            painter.drawEllipse(point, 5, 5);
         }
     }
-    drawLegend(painter, m_topMargin - 10);
+    drawLegend(painter, m_topMargin + 5);
 }
