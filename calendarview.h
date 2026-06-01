@@ -5,10 +5,11 @@
 #include <QCalendarWidget>
 #include <QVBoxLayout>
 #include <QDate>
+#include "basewindow.h"
 
 class MainWindow;
 
-class CalendarWidget : public QWidget
+class CalendarWidget : public BaseWindow
 {
     Q_OBJECT
 

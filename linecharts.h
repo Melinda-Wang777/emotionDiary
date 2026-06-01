@@ -9,10 +9,11 @@
 #include <QPair>
 #include <QString>
 #include <QSpinBox>
+#include "basewindow.h"
 
 class MainWindow;
 
-class LineChartsWindow : public QWidget
+class LineChartsWindow : public BaseWindow
 {
     Q_OBJECT
 public:

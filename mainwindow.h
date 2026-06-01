@@ -11,6 +11,7 @@
 #include<calendarview.h>
 #include<recordemotions.h>
 #include<linecharts.h>
+#include<basewindow.h>
 
 class MainWindow:public QMainWindow
 {
@@ -33,6 +34,7 @@ private:
     void updatePreview();
     void saveCurrentEmotion();
     void checkCapsule();
+     void paintEvent(QPaintEvent* event) override;
 
     QPointer<RecordWindow> m_recordWindow;
     QPointer<CalendarWidget> m_calendarWindow;

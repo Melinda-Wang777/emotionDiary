@@ -7,10 +7,13 @@
 #include <QFont>
 #include <QDate>
 #include <QtMath>
+#include "basewindow.h"
 
 LineChartsWindow::LineChartsWindow(MainWindow *mw, QWidget *parent)
-    : QWidget(parent), m_mainwindow(mw)
+    : BaseWindow(parent), m_mainwindow(mw)
 {
+    setBackgroundImage(":/images/bg_chart.jpg");
+    //setGradientBackground(QColor(245, 245, 240), QColor(235, 230, 225));
     setWindowTitle("情绪趋势分析");
     resize(900, 550);
 

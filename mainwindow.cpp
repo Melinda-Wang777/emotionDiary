@@ -13,6 +13,9 @@
 #include <QPushButton>
 #include <QTextDocument>
 #include "diaryviewwindow.h"
+#include "basewindow.h"
+#include <QPainter>
+#include <QLinearGradient>
 
 static bool dbInitialized = false;
 
@@ -63,9 +66,6 @@ void MainWindow::initDatabase()
     query.exec("CREATE TABLE IF NOT EXISTS capsule_shown ("
                "last_shown_date TEXT PRIMARY KEY)");
 
-    //query.exec("DELETE FROM capsule_shown");
-    //临时加一行方便debug（重新运行程序时清除之前保存的是否弹过胶囊）
-    //最后务必注释掉！！！
 
     dbInitialized = true;
 }
@@ -75,23 +75,61 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     setWindowTitle("情绪日记");
-    setFixedSize(300, 200);
+    setFixedSize(400, 600);
 
     QWidget *central = new QWidget(this);
     setCentralWidget(central);
     QVBoxLayout *mainLayout = new QVBoxLayout(central);
 
-    m_recordBtn = new QPushButton("记录每日情绪🖋️", this);
-    m_recordBtn->setFixedHeight(60);
-    mainLayout->addWidget(m_recordBtn);
+    mainLayout->addStretch();
 
-    m_calendarBtn = new QPushButton("查看月度情绪📅", this);
-    m_calendarBtn->setFixedHeight(60);
-    mainLayout->addWidget(m_calendarBtn);
+    QLabel *titleLabel = new QLabel(this);
+    titleLabel->setText("Emotion Diary");
+    titleLabel->setAlignment(Qt::AlignCenter);
+    QFont titleFont("Rage Italic", 50, QFont::Bold);
+    titleLabel->setFont(titleFont);
+    titleLabel->setStyleSheet(
+        "QLabel {"
+        "  color: #2C2C2C;"
+        "  font-size: 50px;"
+        "  font-weight: bold;"
+        "  background: transparent;"
+        "  padding: 20px;"
+        "}"
+        );
+    mainLayout->addWidget(titleLabel);
 
-    m_lineChartsBtn = new QPushButton("查看月度趋势📈", this);
-    m_lineChartsBtn->setFixedHeight(60);
-    mainLayout->addWidget(m_lineChartsBtn);
+    QLabel *subtitleLabel = new QLabel(this);
+    subtitleLabel->setText("记录你每一天的心情");
+    subtitleLabel->setAlignment(Qt::AlignCenter);
+
+    QFont subtitleFont("KaiTi", 14);
+    subtitleLabel->setFont(subtitleFont);
+    subtitleLabel->setStyleSheet(
+        "QLabel {"
+        "  color: #5A4A3A;"
+        "  background: transparent;"
+        "  padding: 5px;"
+        "}"
+        );
+    mainLayout->addWidget(subtitleLabel);
+
+    mainLayout->addStretch();
+
+    m_recordBtn = new QPushButton("记录每日情绪️", this);
+    m_recordBtn->setFixedHeight(50);
+    m_recordBtn->setFixedWidth(300);
+    mainLayout->addWidget(m_recordBtn, 0, Qt::AlignCenter);
+
+    m_calendarBtn = new QPushButton("查看月度情绪", this);
+    m_calendarBtn->setFixedHeight(50);
+    m_calendarBtn->setFixedWidth(300);
+    mainLayout->addWidget(m_calendarBtn, 0, Qt::AlignCenter);
+
+    m_lineChartsBtn = new QPushButton("查看月度趋势", this);
+    m_lineChartsBtn->setFixedHeight(50);
+    m_lineChartsBtn->setFixedWidth(300);
+    mainLayout->addWidget(m_lineChartsBtn, 0, Qt::AlignCenter);
 
     mainLayout->addStretch();
 
@@ -99,27 +137,19 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_calendarBtn, &QPushButton::clicked, this, &MainWindow::openCalendarWindow);
     connect(m_lineChartsBtn, &QPushButton::clicked, this, &MainWindow::openLineChartsWindow);
 
-    this->setStyleSheet(
-        "QMainWindow {"
-        "  background: qlineargradient(x1:0, y1:0, x2:1, y2:1,"
-        "    stop:0 #E8F4F8, stop:1 #F0E8F4);"
-        "}"
+    central->setStyleSheet(
         "QPushButton {"
-        "  background: qlineargradient(x1:0, y1:0, x2:1, y2:0,"
-        "    stop:0 #4A90D9, stop:1 #6AB0F0);"
-        "  color: white;"
-        "  border: none;"
-        "  border-radius: 15px;"
-        "  font-size: 18px;"
+        "  background-color: transparent;"
+        "  color: #2C2C2C;"
+        "  border: 4px solid #2C2C2C;"
+        "  font-family: 'STKaiti';"
+        "  font-size: 24px;"
         "  font-weight: bold;"
+        "  padding: 10px 20px;"
+        "  min-height: 40px;"
         "}"
         "QPushButton:hover {"
-        "  background: qlineargradient(x1:0, y1:0, x2:1, y2:0,"
-        "    stop:0 #3A80C9, stop:1 #5AA0E0);"
-        "}"
-        "QPushButton:pressed {"
-        "  background: qlineargradient(x1:0, y1:0, x2:1, y2:0,"
-        "    stop:0 #2A70B9, stop:1 #4A90D0);"
+        "  background-color: rgba(44, 44, 44, 0.1);"
         "}"
         );
 
@@ -291,4 +321,21 @@ void MainWindow::checkCapsule()
         viewWin->loadDiary(dateStr, diaryContent);
         viewWin->show();
     }
+}
+
+void MainWindow::paintEvent(QPaintEvent* event)
+{
+    QPainter painter(this);
+    QPixmap bg(":/images/bg_main.jpg");
+    if (!bg.isNull()) {
+        QPixmap scaled = bg.scaled(size(), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+        painter.drawPixmap(0, 0, scaled);
+    } else {
+        QLinearGradient gradient(0, 0, width(), height());
+        gradient.setColorAt(0, QColor(248, 245, 240));
+        gradient.setColorAt(1, QColor(235, 225, 215));
+        painter.fillRect(rect(), gradient);
+    }
+
+    QMainWindow::paintEvent(event);
 }

@@ -9,8 +9,9 @@
 #include <QToolBar>
 #include <QDate>
 #include <QCloseEvent>
+#include "basewindow.h"
 
-class DiaryWindow : public QWidget
+class DiaryWindow : public BaseWindow
 {
     Q_OBJECT
 

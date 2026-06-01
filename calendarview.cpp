@@ -14,14 +14,42 @@
 #include "diaryviewwindow.h"
 
 CalendarWidget::CalendarWidget(MainWindow *mw, QWidget *parent)
-    : QWidget(parent), m_mainWindow(mw)
+    : BaseWindow(parent), m_mainWindow(mw)
 {
+    setGradientBackground(QColor(240, 245, 245), QColor(225, 235, 230));
+    // 如果有背景图，取消注释下面这行
+    // setBackgroundImage(":/images/bg_calendar.jpg");
+
     QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->setContentsMargins(20, 20, 20, 20);
+
     m_calendar = new QCalendarWidget(this);
+
+    // 日历控件极简样式
+    m_calendar->setStyleSheet(
+        "QCalendarWidget {"
+        "  background-color: rgba(255, 255, 255, 0.7);"
+        "  border-radius: 16px;"
+        "  padding: 10px;"
+        "}"
+        "QCalendarWidget QAbstractItemView {"
+        "  selection-background-color: #A8C4B0;"
+        "  selection-color: white;"
+        "}"
+        "QCalendarWidget QToolButton {"
+        "  color: #5A6B5A;"
+        "  background: transparent;"
+        "  font-weight: normal;"
+        "}"
+        "QCalendarWidget QMenu {"
+        "  background-color: white;"
+        "}"
+        );
+
     layout->addWidget(m_calendar);
 
     setWindowTitle("情绪日历");
-    resize(450, 400);
+    resize(500, 450);
 
     connect(m_calendar, &QCalendarWidget::currentPageChanged,
             this, &CalendarWidget::updateCalendarColors);

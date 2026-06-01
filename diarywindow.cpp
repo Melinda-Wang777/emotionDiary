@@ -9,13 +9,16 @@
 #include <QSqlError>
 
 DiaryWindow::DiaryWindow(QWidget *parent)
-    : QWidget(parent)
+    : BaseWindow(parent)
 {
     m_isClosing = false;
 
+    setBackgroundImage(":/images/bg_diary.jpg");
+    //setGradientBackground(QColor(253, 250, 242), QColor(248, 243, 235));
+
     setWindowTitle("日记");
     setWindowFlags(Qt::Window);
-    resize(600, 500);
+    resize(650, 550);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -32,6 +35,43 @@ DiaryWindow::DiaryWindow(QWidget *parent)
     m_fontCombo->setCurrentFont(defaultFont);
 
     mainLayout->addWidget(m_textEdit);
+
+    m_textEdit->setStyleSheet(
+        "QTextEdit {"
+        "  background-color: rgba(255, 255, 255, 0.7);"
+        "  border: none;"
+        "  border-radius: 12px;"
+        "  padding: 20px;"
+        "  font-size: 15px;"
+        "  line-height: 1.6;"
+        "}"
+        "QTextEdit:focus {"
+        "  background-color: rgba(255, 255, 255, 0.85);"
+        "}"
+        );
+
+    // 工具栏极简样式
+    m_toolBar->setStyleSheet(
+        "QToolBar {"
+        "  background: transparent;"
+        "  border: none;"
+        "  spacing: 8px;"
+        "}"
+        "QPushButton {"
+        "  background-color: rgba(139, 122, 107, 0.7);"
+        "  color: white;"
+        "  border: none;"
+        "  border-radius: 8px;"
+        "  padding: 6px 12px;"
+        "  font-weight: normal;"
+        "}"
+        "QPushButton:hover {"
+        "  background-color: rgba(120, 100, 85, 0.8);"
+        "}"
+        "QPushButton:checked {"
+        "  background-color: rgba(100, 80, 65, 0.9);"
+        "}"
+        );
 
     connect(m_textEdit, &QTextEdit::cursorPositionChanged, this, [this]() {
         QTextCharFormat fmt = m_textEdit->currentCharFormat();
