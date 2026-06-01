@@ -5,4 +5,7 @@
         <file>resources/bg_diary.jpg</file>
         <file>resources/bg_main.jpg</file>
     </qresource>
+    <qresource prefix="/">
+        <file>resources/mingchao.otf</file>
+    </qresource>
 </RCC>

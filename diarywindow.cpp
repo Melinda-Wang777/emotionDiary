@@ -7,14 +7,24 @@
 #include <QMessageBox>
 #include <QSqlQuery>
 #include <QSqlError>
+#include <QFontDatabase>
 
 DiaryWindow::DiaryWindow(QWidget *parent)
     : BaseWindow(parent)
 {
     m_isClosing = false;
 
+    // ========== 加载汇文明朝体字体 ==========
+    int fontId = QFontDatabase::addApplicationFont(":/resources/mingchao.otf");
+    QString fontFamily;
+    if (fontId != -1) {
+        fontFamily = QFontDatabase::applicationFontFamilies(fontId).at(0);
+    } else {
+        fontFamily = "KaiTi";  // 加载失败就用楷体
+    }
+
+    // 设置背景图
     setBackgroundImage(":/images/bg_diary.jpg");
-    //setGradientBackground(QColor(253, 250, 242), QColor(248, 243, 235));
 
     setWindowTitle("日记");
     setWindowFlags(Qt::Window);
@@ -29,47 +39,57 @@ DiaryWindow::DiaryWindow(QWidget *parent)
     m_textEdit = new QTextEdit(this);
     m_textEdit->setPlaceholderText("在这里写下你的日记...");
 
+    // ========== 设置默认字体 ==========
     QFont defaultFont = m_textEdit->font();
+    defaultFont.setFamily(fontFamily);
     defaultFont.setPointSize(16);
     m_textEdit->setFont(defaultFont);
     m_fontCombo->setCurrentFont(defaultFont);
 
     mainLayout->addWidget(m_textEdit);
 
+    // 编辑框样式
     m_textEdit->setStyleSheet(
         "QTextEdit {"
-        "  background-color: rgba(255, 255, 255, 0.7);"
+        "  background-color: transparent;"
         "  border: none;"
-        "  border-radius: 12px;"
+
         "  padding: 20px;"
-        "  font-size: 15px;"
-        "  line-height: 1.6;"
+        "  font-size: 14px;"
         "}"
         "QTextEdit:focus {"
-        "  background-color: rgba(255, 255, 255, 0.85);"
+        "  background-color: rgba(255, 255, 255, 0.5);"
         "}"
         );
 
-    // 工具栏极简样式
+    // 工具栏样式
     m_toolBar->setStyleSheet(
         "QToolBar {"
         "  background: transparent;"
         "  border: none;"
-        "  spacing: 8px;"
+        "  spacing: 6px;"
         "}"
         "QPushButton {"
-        "  background-color: rgba(139, 122, 107, 0.7);"
-        "  color: white;"
+        "  background-color: #2C2C2C;"
+        "  color: #FDF9F5;"
         "  border: none;"
-        "  border-radius: 8px;"
+        "  border-radius: 12px;"
         "  padding: 6px 12px;"
-        "  font-weight: normal;"
+        "  font-size: 12px;"
         "}"
         "QPushButton:hover {"
-        "  background-color: rgba(120, 100, 85, 0.8);"
+        "  background-color: #4A4A4A;"
         "}"
         "QPushButton:checked {"
-        "  background-color: rgba(100, 80, 65, 0.9);"
+        "  background-color: #C4A882;"
+        "  color: #2C2C2C;"
+        "}"
+        "QFontComboBox, QComboBox {"
+        "  border: 1px solid #E0D8D0;"
+        "  border-radius: 12px;"
+        "  padding: 4px 8px;"
+        "  background-color: white;"
+        "  color: #5A4A3A;"
         "}"
         );
 
