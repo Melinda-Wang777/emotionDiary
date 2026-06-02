@@ -16,33 +16,105 @@
 CalendarWidget::CalendarWidget(MainWindow *mw, QWidget *parent)
     : BaseWindow(parent), m_mainWindow(mw)
 {
-    setGradientBackground(QColor(240, 245, 245), QColor(225, 235, 230));
+    setGradientBackground(QColor(253, 249, 245), QColor(240, 235, 230));
     // 如果有背景图，取消注释下面这行
     // setBackgroundImage(":/images/bg_calendar.jpg");
 
     QVBoxLayout *layout = new QVBoxLayout(this);
-    layout->setContentsMargins(20, 20, 20, 20);
+    layout->setContentsMargins(24, 24, 24, 24);
+    layout->setSpacing(20);
 
     m_calendar = new QCalendarWidget(this);
 
     // 日历控件极简样式
     m_calendar->setStyleSheet(
+        // ===== 整体容器 =====
         "QCalendarWidget {"
-        "  background-color: rgba(255, 255, 255, 0.7);"
+        "  background-color: rgba(255, 255, 255, 0.65);"
         "  border-radius: 16px;"
-        "  padding: 10px;"
+        "  padding: 12px;"
+        "  border: 1px solid #E8E0D8;"
         "}"
-        "QCalendarWidget QAbstractItemView {"
-        "  selection-background-color: #A8C4B0;"
+
+        // ===== 日期表格 =====
+        "QCalendarWidget QTableView {"
+        "  background-color: transparent;"
+        "  selection-background-color: #C4A882;"
         "  selection-color: white;"
+        "  alternate-background-color: transparent;"
+        "  gridline-color: transparent;"
+        "  font-size: 13px;"
         "}"
-        "QCalendarWidget QToolButton {"
-        "  color: white;"
-        "  background: transparent;"
+
+        // ===== 星期标题 =====
+        "QCalendarWidget QHeaderView::section {"
+        "  background-color: transparent;"
+        "  color: #8A7A6A;"
         "  font-weight: normal;"
+        "  padding-bottom: 6px;"
         "}"
+
+        // ===== 顶部整条导航栏（一个黑框）=====
+        "QCalendarWidget QWidget#qt_calendar_navigationbar {"
+        "  background-color: transparent;"
+        "  border: 1px solid #3A3A3A;"   // ✅ 一整条黑框
+        "  border-radius: 10px;"          // ✅ 更柔和
+        "  padding: 8px 12px;"            // ✅ 更高、更松
+        "}"
+
+        // ===== 所有按钮（清掉单独边框）=====
+        "QCalendarWidget QToolButton {"
+        "  background-color: transparent;"
+        "  border: none;"                 // ✅ 不要单个按钮框
+        "  color: #5A4A3A;"
+        "  font-size: 15px;"              // ✅ 仅顶部字号变大
+        "  font-weight: normal;"
+        "  padding: 0 4px;"
+        "}"
+
+        // ===== 左右箭头（单线手写感）=====
+        "QCalendarWidget QToolButton::left-arrow,"
+        "QCalendarWidget QToolButton::right-arrow {"
+        "  image: none;"                  // ✅ 禁用原生箭头
+        "}"
+
+        "QCalendarWidget QToolButton[text=\"‹\"] {"
+        "  font-family: \"Segoe UI Symbol\", \"PingFang SC\";"
+        "  font-size: 18px;"
+        "  color: #000000;"
+        "}"
+        "QCalendarWidget QToolButton[text=\"›\"] {"
+        "  font-family: \"Segoe UI Symbol\", \"PingFang SC\";"
+        "  font-size: 18px;"
+        "  color: #000000;"
+        "}"
+
+        "QCalendarWidget QToolButton:hover {"
+        "  color: #000000;"
+        "}"
+
+        // ===== 下拉菜单 =====
         "QCalendarWidget QMenu {"
         "  background-color: white;"
+        "  border-radius: 10px;"
+        "  padding: 4px;"
+        "}"
+        "QCalendarWidget QMenu::item {"
+        "  color: #5A4A3A;"
+        "  padding: 6px 16px;"
+        "  border-radius: 6px;"
+        "}"
+        "QCalendarWidget QMenu::item:selected {"
+        "  background-color: #C4A882;"
+        "  color: white;"
+        "}"
+
+        // ===== 年份 SpinBox =====
+        "QCalendarWidget QSpinBox {"
+        "  color: #5A4A3A;"
+        "  background-color: white;"
+        "  border: 1px solid #E0D8D0;"
+        "  border-radius: 6px;"
         "}"
         );
 
