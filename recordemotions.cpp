@@ -303,18 +303,42 @@ void RecordWindow::saveCurrentEmotion()
         return;
     }
 
-    QSqlQuery query(db);
-    query.prepare("INSERT OR REPLACE INTO daily_emotions (date, p, a, d) VALUES (?, ?, ?, ?)");
-    query.addBindValue(date);
-    query.addBindValue(p);
-    query.addBindValue(a);
-    query.addBindValue(d);
+    //此版本会在第一次修改情绪的时候完全替换旧日期下内容，如果此前写了日记则日记会消失。
 
-    if (query.exec()) {
-        QMessageBox::information(this, "成功", "情绪已保存");
-    } else {
-        QMessageBox::warning(this, "错误", "保存失败: " + query.lastError().text());
+    //QSqlQuery query(db);
+    //query.prepare("INSERT OR REPLACE INTO daily_emotions (date, p, a, d) VALUES (?, ?, ?, ?)");
+    //query.addBindValue(date);
+    //query.addBindValue(p);
+    //query.addBindValue(a);
+    //query.addBindValue(d);
+
+    //if (query.exec()) {
+    //    QMessageBox::information(this, "成功", "情绪已保存");
+    //} else {
+    //    QMessageBox::warning(this, "错误", "保存失败: " + query.lastError().text());
+    //}
+
+    //尝试更新已有的情绪记录
+    QSqlQuery updateQuery(db);
+    updateQuery.prepare("UPDATE daily_emotions SET p = ?, a = ?, d = ? WHERE date = ?");
+    updateQuery.addBindValue(p);
+    updateQuery.addBindValue(a);
+    updateQuery.addBindValue(d);
+    updateQuery.addBindValue(date);
+    updateQuery.exec();//如果该日期下没有记录，则执行该行不会发生变化，进入if语句
+
+    if (updateQuery.numRowsAffected() == 0)
+    {
+        QSqlQuery insertQuery(db);
+        insertQuery.prepare("INSERT INTO daily_emotions (date, p, a, d, diary) VALUES (?, ?, ?, ?, NULL)");
+        insertQuery.addBindValue(date);
+        insertQuery.addBindValue(p);
+        insertQuery.addBindValue(a);
+        insertQuery.addBindValue(d);
+        insertQuery.exec();
     }
+
+    QMessageBox::information(this, "成功", "情绪已保存");
 }
 
 QVector3D RecordWindow::getEmotionByDate(const QString &date)

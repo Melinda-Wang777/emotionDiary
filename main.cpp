@@ -5,13 +5,13 @@
 #include <QHBoxLayout>
 #include <QGroupBox>
 #include <QDate>
-#include<QMessageBox>
-#include<QSqlQuery>
-#include<QVector3D>
-#include<QSqlError>
+#include <QMessageBox>
+#include <QSqlQuery>
+#include <QVector3D>
+#include <QSqlError>
 #include <QPushButton>
 #include <QTextDocument>
-#include <QSqlDataBase>
+#include <QSqlDatabase>
 #include <QFontDatabase>
 
 int main(int argc, char *argv[])
@@ -25,11 +25,9 @@ int main(int argc, char *argv[])
             QFont defaultFont = a.font();
             defaultFont.setFamily(fontFamily);
             a.setFont(defaultFont);
-
         }
-
     }
     MainWindow w;
     w.show();
-    return QCoreApplication::exec();
+    return a.exec();
 }
