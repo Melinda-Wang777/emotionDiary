@@ -28,7 +28,6 @@ CalendarWidget::CalendarWidget(MainWindow *mw, QWidget *parent)
 
     // 日历控件极简样式
     m_calendar->setStyleSheet(
-        // ===== 整体容器 =====
         "QCalendarWidget {"
         "  background-color: rgba(255, 255, 255, 0.65);"
         "  border-radius: 16px;"
@@ -36,7 +35,6 @@ CalendarWidget::CalendarWidget(MainWindow *mw, QWidget *parent)
         "  border: 1px solid #E8E0D8;"
         "}"
 
-        // ===== 日期表格 =====
         "QCalendarWidget QTableView {"
         "  background-color: transparent;"
         "  selection-background-color: #C4A882;"
@@ -46,7 +44,6 @@ CalendarWidget::CalendarWidget(MainWindow *mw, QWidget *parent)
         "  font-size: 13px;"
         "}"
 
-        // ===== 星期标题 =====
         "QCalendarWidget QHeaderView::section {"
         "  background-color: transparent;"
         "  color: #8A7A6A;"
@@ -54,28 +51,25 @@ CalendarWidget::CalendarWidget(MainWindow *mw, QWidget *parent)
         "  padding-bottom: 6px;"
         "}"
 
-        // ===== 顶部整条导航栏（一个黑框）=====
         "QCalendarWidget QWidget#qt_calendar_navigationbar {"
         "  background-color: transparent;"
-        "  border: 1px solid #3A3A3A;"   // ✅ 一整条黑框
-        "  border-radius: 10px;"          // ✅ 更柔和
-        "  padding: 8px 12px;"            // ✅ 更高、更松
+        "  border: 1px solid #3A3A3A;"
+        "  border-radius: 10px;"
+        "  padding: 8px 12px;"
         "}"
 
-        // ===== 所有按钮（清掉单独边框）=====
         "QCalendarWidget QToolButton {"
         "  background-color: transparent;"
-        "  border: none;"                 // ✅ 不要单个按钮框
+        "  border: none;"
         "  color: #5A4A3A;"
-        "  font-size: 15px;"              // ✅ 仅顶部字号变大
+        "  font-size: 15px;"
         "  font-weight: normal;"
         "  padding: 0 4px;"
         "}"
 
-        // ===== 左右箭头（单线手写感）=====
         "QCalendarWidget QToolButton::left-arrow,"
         "QCalendarWidget QToolButton::right-arrow {"
-        "  image: none;"                  // ✅ 禁用原生箭头
+        "  image: none;"
         "}"
 
         "QCalendarWidget QToolButton[text=\"‹\"] {"
@@ -93,7 +87,6 @@ CalendarWidget::CalendarWidget(MainWindow *mw, QWidget *parent)
         "  color: #000000;"
         "}"
 
-        // ===== 下拉菜单 =====
         "QCalendarWidget QMenu {"
         "  background-color: white;"
         "  border-radius: 10px;"
@@ -109,7 +102,6 @@ CalendarWidget::CalendarWidget(MainWindow *mw, QWidget *parent)
         "  color: white;"
         "}"
 
-        // ===== 年份 SpinBox =====
         "QCalendarWidget QSpinBox {"
         "  color: #5A4A3A;"
         "  background-color: white;"
