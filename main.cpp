@@ -11,7 +11,7 @@
 #include<QSqlError>
 #include <QPushButton>
 #include <QTextDocument>
-#include <QSqlDataBase>
+#include <QtSql/QSqlDataBase>
 
 int main(int argc, char *argv[])
 {
