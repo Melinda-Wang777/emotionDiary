@@ -37,7 +37,7 @@ CalendarWidget::CalendarWidget(MainWindow *mw, QWidget *parent)
         "  selection-color: white;"
         "}"
         "QCalendarWidget QToolButton {"
-        "  color: #5A6B5A;"
+        "  color: white;"
         "  background: transparent;"
         "  font-weight: normal;"
         "}"
