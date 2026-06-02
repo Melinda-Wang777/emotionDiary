@@ -14,7 +14,7 @@ RecordWindow::RecordWindow(QWidget *parent)
 {
     setWindowTitle("记录情绪");
     setWindowFlags(Qt::Window);
-    resize(1000,600);
+    resize(800,600);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
@@ -75,119 +75,136 @@ RecordWindow::RecordWindow(QWidget *parent)
     });
 
     loadEmotion(QDate::currentDate().toString("yyyy-MM-dd"));
-
     this->setStyleSheet(
+
+
+        // 主窗口背景
         "QWidget {"
-        "  background: qlineargradient(x1:0, y1:0, x2:1, y2:1,"
-        "    stop:0 #E8F4F8, stop:1 #F0E8F4);"
+        "  background: #FDF9F5;"
         "}"
+
+        // 分组框
         "QGroupBox {"
-        "  font-weight: bold;"
+        "  font-weight: normal;"
         "  font-size: 13px;"
-        "  border: 2px solid #A8D8EA;"
-        "  border-radius: 12px;"
-        "  margin-top: 14px;"
-        "  padding-top: 10px;"
-        "  background-color: rgba(255,255,255,0.6);"
+        "  border: 1px solid #E8E0D8;"
+        "  border-radius: 16px;"
+        "  margin-top: 16px;"
+        "  padding-top: 12px;"
+        "  background-color: rgba(255, 255, 255, 0.6);"
         "}"
         "QGroupBox::title {"
         "  subcontrol-origin: margin;"
-        "  left: 12px;"
+        "  left: 16px;"
         "  padding: 0 8px;"
-        "  color: #E8D0B0;"
+        "  color: #5A4A3A;"
         "}"
+
+        // 滑块轨道
         "QSlider::groove:horizontal {"
-        "  height: 8px;"
-        "  background: #D8F0D8;"
-        "  border-radius: 4px;"
+        "  height: 2px;"
+        "  background: #D0C8C0;"
+        "  border-radius: 1px;"
         "}"
         "QSlider::handle:horizontal {"
-        "  background: qradialgradient(cx:0.5, cy:0.5, radius:0.5,"
-        "    stop:0 white, stop:1 #F5C0C0);"
-        "  width: 18px;"
-        "  height: 18px;"
-        "  margin: -5px 0;"
-        "  border-radius: 9px;"
+        "  background: #5A4A3A;"
+        "  width: 8px;"
+        "  height: 8px;"
+        "  margin: -3px 0;"
+        "  border-radius: 4px;"
         "}"
         "QSlider::handle:horizontal:hover {"
-        "  background: qradialgradient(cx:0.5, cy:0.5, radius:0.5,"
-        "    stop:0 white, stop:1 #F0A8A8);"
+        "  background: #C4A882;"
         "}"
-        "QPushButton {"
-        "  background: qlineargradient(x1:0, y1:0, x2:1, y2:0,"
-        "    stop:0 #F08080, stop:1 #FAA0A0);"
-        "  color: white;"
+        "QSlider:focus {"
+        "  outline: none;"
+        "}"
+
+        // 预览框
+
+        "QLabel#previewLabel {"
         "  border: none;"
-        "  border-radius: 8px;"
-        "  padding: 10px 20px;"
-        "  font-weight: bold;"
-        "  font-size: 14px;"
+        "  border-radius: 16px;"
+        "  background-color: white;"
+        "}"
+
+        // 按钮
+        "QPushButton {"
+        "  background-color: #F0EBE5;"
+        "  color: #5A4A3A;"
+        "  border: 1px solid #D0C8C0;"
+        "  border-radius: 20px;"
+        "  padding: 8px 20px;"
+        "  font-size: 13px;"
+        "  letter-spacing: 2px;"
         "}"
         "QPushButton:hover {"
-        "  background: qlineargradient(x1:0, y1:0, x2:1, y2:0,"
-        "    stop:0 #E07070, stop:1 #Ea9090);"
+        "  background-color: #E8E0D8;"
+        "  border-color: #C4A882;"
         "}"
-        "QPushButton:pressed {"
-        "  background: qlineargradient(x1:0, y1:0, x2:1, y2:0,"
-        "    stop:0 #D06060, stop:1 #D08080);"
-        "}"
-        "QLabel {"
-        "  color: #555;"
-        "  font-size: 12px;"
-        "}"
+
+        // 数值文字
         "QLabel#valueLabel {"
         "  font-size: 14px;"
         "  font-weight: bold;"
-        "  color: #4A90D9;"
-        "  background-color: rgba(255,255,255,0.7);"
+        "  color: #5A4A3A;"
+        "  background-color: rgba(255, 255, 255, 0.6);"
         "  border-radius: 8px;"
-        "  padding: 5px 10px;"
-        "}"
-        "QDateEdit {"
-        "  border: 2px solid #A8D8EA;"
-        "  border-radius: 8px;"
-        "  padding: 6px 10px;"
-        "  background-color: white;"
-        "  color: #333;"
-        "  font-size: 13px;"
-        "}"
-        "QDateEdit:hover {"
-        "  border-color: #4A90D9;"
+        "  padding: 5px 12px;"
         "}"
 
+        // 日期选择器
+        "QDateEdit {"
+        "  border: 1px solid #D0C8C0;"
+        "  border-radius: 20px;"
+        "  padding: 6px 12px;"
+        "  background-color: white;"
+        "  color: #5A4A3A;"
+        "}"
+        "QDateEdit:hover {"
+        "  border-color: #C4A882;"
+        "}"
+
+        // 普通文字标签
+        "QLabel {"
+        "  color: #5A4A3A;"
+        "}"
+
+        // 日历控件
         "QCalendarWidget {"
         "  background-color: white;"
+        "  border-radius: 12px;"
         "}"
         "QCalendarWidget QWidget {"
         "  background-color: white;"
         "}"
         "QCalendarWidget QTableView {"
         "  background-color: white;"
-        "  selection-background-color: #4A90D9;"
+        "  selection-background-color: #C4A882;"
         "  selection-color: white;"
         "}"
         "QCalendarWidget QToolButton {"
-        "  color: black;"
-        "  background-color: #D0E8F0;"
-        "  border: none;"
-        "  border-radius: 4px;"
-        "  font-weight: bold;"
+        "  color: #5A4A3A;"
+        "  background-color: #F0EBE5;"
+        "  border: 1px solid #D0C8C0;"
+        "  border-radius: 6px;"
         "}"
         "QCalendarWidget QToolButton:hover {"
-        "  background-color: #B8D8E8;"
+        "  background-color: #E8E0D8;"
         "}"
         "QCalendarWidget QMenu {"
-        "  color: black;"
+        "  color: #5A4A3A;"
         "  background-color: white;"
         "}"
         "QCalendarWidget QMenu::item:selected {"
+        "  background-color: #C4A882;"
         "  color: white;"
         "}"
         "QCalendarWidget QSpinBox {"
-        "  color: black;"
+        "  color: #5A4A3A;"
         "  background-color: white;"
-        "  border: 1px solid #A8D8EA;"
-        "  border-radius: 4px;"
+        "  border: 1px solid #E0D8D0;"
+        "  border-radius: 6px;"
         "}"
         );
 
@@ -263,7 +280,7 @@ void RecordWindow::updatePreview()
     int d = m_sliderD->value();
 
     m_valueLabel->setText(QString("P:%1  A:%2  D:%3").arg(p).arg(a).arg(d));
-    QString colorStyle = QString("background-color: rgb(%1, %2, %3); border: 1px solid black;")
+    QString colorStyle = QString("background-color: rgb(%1, %2, %3); border: 12px;")
                              .arg(p).arg(a).arg(d);
     m_previewLabel->setStyleSheet(colorStyle);
 }

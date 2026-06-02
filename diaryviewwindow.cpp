@@ -2,25 +2,36 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QDate>
+#include <QPalette>
 
 DiaryViewWindow::DiaryViewWindow(QWidget *parent)
     : QWidget(parent)
 {
-    setWindowTitle("时光胶囊");
+    setWindowTitle("日记");
     setWindowFlags(Qt::Window);
-    resize(550, 650);
+    resize(600, 550);
+
+    // 整体背景
+    this->setStyleSheet(
+        "QWidget {"
+        "  background: #FDF9F5;"
+        "}"
+        );
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
-    mainLayout->setContentsMargins(20, 15, 20, 20);
+    mainLayout->setContentsMargins(30, 25, 30, 30);
 
     // 只读日记内容
     m_textEdit = new QTextEdit(this);
     m_textEdit->setReadOnly(true);
     m_textEdit->setStyleSheet(
         "QTextEdit {"
-        "  border: none;"
-        "  background: white;"
-        "  font-size: 16px;"
+        "  background-color: rgba(255, 255, 255, 0.7);"
+        "  border: 1px solid #E8E0D8;"
+        "  border-radius: 20px;"
+        "  padding: 24px;"
+        "  font-size: 15px;"
+        "  line-height: 1.6;"
         "}"
         );
     mainLayout->addWidget(m_textEdit);

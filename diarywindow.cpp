@@ -14,16 +14,16 @@ DiaryWindow::DiaryWindow(QWidget *parent)
 {
     m_isClosing = false;
 
-    // ========== 加载汇文明朝体字体 ==========
+
     int fontId = QFontDatabase::addApplicationFont(":/resources/mingchao.otf");
     QString fontFamily;
     if (fontId != -1) {
         fontFamily = QFontDatabase::applicationFontFamilies(fontId).at(0);
     } else {
-        fontFamily = "KaiTi";  // 加载失败就用楷体
+        fontFamily = "KaiTi";
     }
 
-    // 设置背景图
+
     setBackgroundImage(":/images/bg_diary.jpg");
 
     setWindowTitle("日记");
@@ -39,7 +39,7 @@ DiaryWindow::DiaryWindow(QWidget *parent)
     m_textEdit = new QTextEdit(this);
     m_textEdit->setPlaceholderText("在这里写下你的日记...");
 
-    // ========== 设置默认字体 ==========
+
     QFont defaultFont = m_textEdit->font();
     defaultFont.setFamily(fontFamily);
     defaultFont.setPointSize(16);
@@ -48,48 +48,71 @@ DiaryWindow::DiaryWindow(QWidget *parent)
 
     mainLayout->addWidget(m_textEdit);
 
-    // 编辑框样式
+
     m_textEdit->setStyleSheet(
         "QTextEdit {"
-        "  background-color: transparent;"
+        "  background-color: rgba(255, 255, 255, 0.4);"
         "  border: none;"
-
-        "  padding: 20px;"
-        "  font-size: 14px;"
+        "  border-radius: 20px;"
+        "  padding: 24px;"
+        "  font-size: 15px;"
+        "  line-height: 1.6;"
         "}"
         "QTextEdit:focus {"
-        "  background-color: rgba(255, 255, 255, 0.5);"
+        "  background-color: rgba(255, 255, 255, 0.6);"
         "}"
         );
 
-    // 工具栏样式
+
     m_toolBar->setStyleSheet(
         "QToolBar {"
         "  background: transparent;"
         "  border: none;"
-        "  spacing: 6px;"
+        "  spacing: 8px;"
+        "  padding: 5px 10px;"
         "}"
         "QPushButton {"
-        "  background-color: #2C2C2C;"
-        "  color: #FDF9F5;"
-        "  border: none;"
+        "  background-color: #F0EBE5;"
+        "  color: #5A4A3A;"
+        "  border: 1px solid #D0C8C0;"
         "  border-radius: 12px;"
         "  padding: 6px 12px;"
         "  font-size: 12px;"
         "}"
         "QPushButton:hover {"
-        "  background-color: #4A4A4A;"
+        "  background-color: #E8E0D8;"
+        "  border-color: #C4A882;"
         "}"
         "QPushButton:checked {"
         "  background-color: #C4A882;"
         "  color: #2C2C2C;"
+        "  border-color: #C4A882;"
         "}"
-        "QFontComboBox, QComboBox {"
-        "  border: 1px solid #E0D8D0;"
+        "QFontComboBox {"
+        "  border: 1px solid #D0C8C0;"
         "  border-radius: 12px;"
         "  padding: 4px 8px;"
         "  background-color: white;"
         "  color: #5A4A3A;"
+        "}"
+        "QFontComboBox QAbstractItemView {"
+        "  background-color: white;"
+        "  color: #5A4A3A;"
+        "  selection-background-color: #C4A882;"
+        "  selection-color: white;"
+        "}"
+        "QComboBox {"
+        "  border: 1px solid #D0C8C0;"
+        "  border-radius: 12px;"
+        "  padding: 4px 8px;"
+        "  background-color: white;"
+        "  color: #5A4A3A;"
+        "}"
+        "QComboBox QAbstractItemView {"
+        "  background-color: white;"
+        "  color: #5A4A3A;"
+        "  selection-background-color: #C4A882;"
+        "  selection-color: white;"
         "}"
         );
 
@@ -173,8 +196,8 @@ void DiaryWindow::setupToolBar()
     //添加撤销/恢复按钮
     m_toolBar->addSeparator();
 
-    m_undoBtn = new QPushButton("↩️ 撤销", this);
-    m_redoBtn = new QPushButton("↪️ 恢复", this);
+    m_undoBtn = new QPushButton("↩撤销", this);
+    m_redoBtn = new QPushButton("↪ 恢复", this);
     m_toolBar->addWidget(m_undoBtn);
     m_toolBar->addWidget(m_redoBtn);
 
