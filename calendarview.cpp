@@ -2,7 +2,10 @@
 #include "mainwindow.h"
 #include "qvectornd.h"
 #include <QCalendarWidget>
+#include <QDialog>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QLabel>
 #include <QTextCharFormat>
 #include <QDate>
 #include <QMap>
@@ -12,6 +15,7 @@
 #include <diarywindow.h>
 #include <QTextDocument>
 #include "diaryviewwindow.h"
+#include <QShowEvent>
 
 CalendarWidget::CalendarWidget(MainWindow *mw, QWidget *parent)
     : BaseWindow(parent), m_mainWindow(mw)
@@ -121,8 +125,6 @@ CalendarWidget::CalendarWidget(MainWindow *mw, QWidget *parent)
 
     connect(m_calendar, &QCalendarWidget::clicked,
             this, &CalendarWidget::onDateClicked);
-
-    QTimer::singleShot(0, this, [this](){updateCalendarColors();});
 }
 
 void CalendarWidget::updateCalendarColors()
@@ -139,7 +141,7 @@ void CalendarWidget::updateCalendarColors()
 
     QDate startDate;
     if (weekdayIndex == 7) {
-        startDate = firstOfMonth.addDays(-7); //强制让1号出现在第二行之后的第一行
+        startDate = firstOfMonth.addDays(-7);
     } else {
         Qt::DayOfWeek firstDayOfWeek = m_calendar->firstDayOfWeek();
         int offset = (weekdayIndex - static_cast<int>(firstDayOfWeek) + 7) % 7;
@@ -182,6 +184,13 @@ void CalendarWidget::updateCalendarColors()
     }
 }
 
+void CalendarWidget::showEvent(QShowEvent *event)
+{
+    BaseWindow::showEvent(event);
+    updateCalendarColors();
+    m_calendar->update();
+}
+
 void CalendarWidget::onDateClicked(const QDate &date)
 {
     QString dateStr = date.toString("yyyy-MM-dd");
@@ -197,7 +206,6 @@ void CalendarWidget::onDateClicked(const QDate &date)
         if (query.exec() && query.next()) {
             diaryContent = query.value(0).toString();
             if (!diaryContent.isEmpty()) {
-                // 用 QTextDocument 解析 HTML，检查是否真的为空
                 QTextDocument doc;
                 doc.setHtml(diaryContent);
                 if (!doc.isEmpty()) {
@@ -213,14 +221,73 @@ void CalendarWidget::onDateClicked(const QDate &date)
         viewWin->loadDiary(dateStr, diaryContent);
         viewWin->show();
     } else {
-        QMessageBox msgBox(this);
-        msgBox.setWindowTitle("没有记录");
-        msgBox.setText(dateStr + " 还没有写日记哦~");
-        msgBox.setInformativeText("要现在补充吗？");
-        msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-        msgBox.setDefaultButton(QMessageBox::Yes);
+        // 使用自定义 QDialog 替代 QMessageBox
+        QDialog dialog(this);
+        dialog.setWindowTitle("没有记录");
+        dialog.setModal(true);
+        dialog.setFixedSize(320, 150); // 可根据文字调整
 
-        if (msgBox.exec() == QMessageBox::Yes) {
+        // 设置布局
+        QVBoxLayout *layout = new QVBoxLayout(&dialog);
+        layout->setSpacing(12);
+        layout->setContentsMargins(20, 20, 20, 20);
+
+        QLabel *textLabel = new QLabel(dateStr + " 还没有写日记哦~", &dialog);
+        textLabel->setAlignment(Qt::AlignCenter);
+        textLabel->setWordWrap(true);
+        layout->addWidget(textLabel);
+
+        QLabel *infoLabel = new QLabel("要现在补充吗？", &dialog);
+        infoLabel->setAlignment(Qt::AlignCenter);
+        layout->addWidget(infoLabel);
+
+        QHBoxLayout *btnLayout = new QHBoxLayout;
+        btnLayout->setSpacing(20);
+        QPushButton *yesBtn = new QPushButton("是", &dialog);
+        QPushButton *noBtn = new QPushButton("否", &dialog);
+        yesBtn->setDefault(true);
+        btnLayout->addStretch();
+        btnLayout->addWidget(yesBtn);
+        btnLayout->addWidget(noBtn);
+        btnLayout->addStretch();
+        layout->addLayout(btnLayout);
+
+        dialog.setStyleSheet(
+            "QDialog {"
+            "  background-color: #F0E9E1;"
+            "  border: 1px solid #E8E0D8;"
+            "}"
+            "QLabel {"
+            "  color: #4A3A2A;"
+            "  font-size: 13px;"
+            "  font-family: 'SimSun';"
+            "}"
+            "QPushButton {"
+            "  background-color: transparent;"
+            "  border: 1px solid black;"
+            "  border-radius: 8px;"
+            "  color: #2A2A2A;"
+            "  padding: 6px 16px;"
+            "  min-width: 70px;"
+            "  font-family: 'SimSun';"
+            "}"
+            "QPushButton:hover {"
+            "  background-color: rgba(0, 0, 0, 0.05);"
+            "}"
+            "QPushButton:default {"
+            "  background-color: #D2B48C;"
+            "  border-color: black;"
+            "  color: white;"
+            "}"
+            "QPushButton:default:hover {"
+            "  background-color: #C4A882;"
+            "}"
+            );
+
+        connect(yesBtn, &QPushButton::clicked, &dialog, &QDialog::accept);
+        connect(noBtn, &QPushButton::clicked, &dialog, &QDialog::reject);
+
+        if (dialog.exec() == QDialog::Accepted) {
             DiaryWindow *diaryWin = new DiaryWindow(nullptr);
             diaryWin->setAttribute(Qt::WA_DeleteOnClose);
             diaryWin->loadDiary(dateStr);

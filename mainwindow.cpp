@@ -66,6 +66,9 @@ void MainWindow::initDatabase()
     query.exec("CREATE TABLE IF NOT EXISTS capsule_shown ("
                "last_shown_date TEXT PRIMARY KEY)");
 
+    query.exec("DELETE FROM capsule_shown");
+    //临时加一行方便debug（重新运行程序时清除之前保存的是否弹过胶囊）
+    //最后务必注释掉！！！
 
     dbInitialized = true;
 }
@@ -306,6 +309,7 @@ void MainWindow::checkCapsule()
     QVector3D emotion = getEmotionByDate(dateStr);
     QColor color(emotion.x(), emotion.y(), emotion.z());
     QMessageBox msgBox;
+
     QPixmap pixmap(32, 32);
     pixmap.fill(color);
     msgBox.setIconPixmap(pixmap);
@@ -313,6 +317,33 @@ void MainWindow::checkCapsule()
     QPushButton *viewBtn = msgBox.addButton("哇！去看看", QMessageBox::AcceptRole);
     msgBox.addButton("知道啦", QMessageBox::RejectRole);
     msgBox.setDefaultButton(viewBtn);
+
+    // 添加样式表（在 macOS 上背景色和按钮边框可能生效，至少不会破坏弹窗）
+    msgBox.setStyleSheet(
+        "QMessageBox {"
+        "  background-color: #F2EBE3;"
+        "  border-radius: 16px;"
+        "  border: 1px solid #E8E0D8;"
+        "}"
+        "QLabel {"
+        "  color: #4A3A2A;"
+        "}"
+        "QPushButton {"
+        "  background-color: transparent;"
+        "  border: 1px solid black;"
+        "  border-radius: 8px;"
+        "  color: #2A2A2A;"
+        "  padding: 6px 12px;"
+        "}"
+        "QPushButton:hover {"
+        "  background-color: rgba(0,0,0,0.05);"
+        "}"
+        "QPushButton:default {"
+        "  background-color: #D2B48C;"
+        "  color: white;"
+        "}"
+        );
+
     msgBox.exec();
 
     if (msgBox.clickedButton() == viewBtn) {

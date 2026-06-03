@@ -22,6 +22,9 @@ private:
     MainWindow *m_mainWindow;
     QCalendarWidget *m_calendar;
 
+protected:
+    void showEvent(QShowEvent *event) override;
+
 private slots:
     void onDateClicked(const QDate &date);
 };
