@@ -25,6 +25,7 @@ CalendarWidget::CalendarWidget(MainWindow *mw, QWidget *parent)
     layout->setSpacing(20);
 
     m_calendar = new QCalendarWidget(this);
+    m_calendar->setFirstDayOfWeek(Qt::Sunday);
 
     // 日历控件极简样式
     m_calendar->setStyleSheet(
@@ -130,51 +131,54 @@ void CalendarWidget::updateCalendarColors()
 
     int year = m_calendar->yearShown();
     int month = m_calendar->monthShown();
+
     QDate firstOfMonth(year, month, 1);
-    Qt::DayOfWeek firstDayOfWeek = m_calendar->firstDayOfWeek();
-    int weekday = firstOfMonth.dayOfWeek();
-    int offset = (weekday - static_cast<int>(firstDayOfWeek) + 7) % 7;
-    QDate startDate = firstOfMonth.addDays(-offset);
+
+    QCalendar cal;
+    int weekdayIndex = cal.dayOfWeek(firstOfMonth);
+
+    QDate startDate;
+    if (weekdayIndex == 7) {
+        startDate = firstOfMonth.addDays(-7); //强制让1号出现在第二行之后的第一行
+    } else {
+        Qt::DayOfWeek firstDayOfWeek = m_calendar->firstDayOfWeek();
+        int offset = (weekdayIndex - static_cast<int>(firstDayOfWeek) + 7) % 7;
+        startDate = firstOfMonth.addDays(-offset);
+    }
+
+    //遍历所有可见日期
     QTextCharFormat defaultFmt;
     defaultFmt.setBackground(Qt::white);
     defaultFmt.setForeground(Qt::black);
+
     for (int i = 0; i < 42; ++i) {
         QDate date = startDate.addDays(i);
         m_calendar->setDateTextFormat(date, defaultFmt);
     }
 
-    int year2 = m_calendar->yearShown();
-    int month2 = m_calendar->monthShown();
-    auto data = m_mainWindow->getMonthData(year2, month2);
+    auto data = m_mainWindow->getMonthData(year, month);
 
     QMap<QString, QVector3D> dateMap;
     for (auto &item : data) {
         dateMap[item.first] = item.second;
     }
 
-    QDate firstDay(year2, month2, 1);
-    int daysInMonth = firstDay.daysInMonth();
-
-    for (int day = 1; day <= daysInMonth; day++) {
-        QDate date(year2, month2, day);
+    int daysInMonth = firstOfMonth.daysInMonth();
+    for (int day = 1; day <= daysInMonth; ++day) {
+        QDate date(year, month, day);
         QString key = date.toString("yyyy-MM-dd");
-
-        QTextCharFormat fmt;
 
         if (dateMap.contains(key)) {
             QVector3D pad = dateMap[key];
-            int p = pad.x();
-            int a = pad.y();
-            int d = pad.z();
+            int p = static_cast<int>(pad.x());
+            int a = static_cast<int>(pad.y());
+            int d = static_cast<int>(pad.z());
+            QTextCharFormat fmt;
             fmt.setBackground(QColor(p, a, d));
             int gray = (p + a + d) / 3;
             fmt.setForeground(gray > 128 ? Qt::black : Qt::white);
-        } else {
-            fmt.setBackground(Qt::white);
-            fmt.setForeground(Qt::black);
+            m_calendar->setDateTextFormat(date, fmt);
         }
-
-        m_calendar->setDateTextFormat(date, fmt);
     }
 }
 
