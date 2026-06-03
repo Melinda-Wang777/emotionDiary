@@ -121,8 +121,8 @@ CalendarWidget::CalendarWidget(MainWindow *mw, QWidget *parent)
     connect(m_calendar, &QCalendarWidget::clicked,
             this, &CalendarWidget::onDateClicked);
 
-    QTimer::singleShot(100, this, [this](){updateCalendarColors();});
-  }
+    QTimer::singleShot(0, this, [this](){updateCalendarColors();});
+}
 
 void CalendarWidget::updateCalendarColors()
 {
@@ -130,19 +130,33 @@ void CalendarWidget::updateCalendarColors()
 
     int year = m_calendar->yearShown();
     int month = m_calendar->monthShown();
+    QDate firstOfMonth(year, month, 1);
+    Qt::DayOfWeek firstDayOfWeek = m_calendar->firstDayOfWeek();
+    int weekday = firstOfMonth.dayOfWeek();
+    int offset = (weekday - static_cast<int>(firstDayOfWeek) + 7) % 7;
+    QDate startDate = firstOfMonth.addDays(-offset);
+    QTextCharFormat defaultFmt;
+    defaultFmt.setBackground(Qt::white);
+    defaultFmt.setForeground(Qt::black);
+    for (int i = 0; i < 42; ++i) {
+        QDate date = startDate.addDays(i);
+        m_calendar->setDateTextFormat(date, defaultFmt);
+    }
 
-    auto data = m_mainWindow->getMonthData(year, month);
+    int year2 = m_calendar->yearShown();
+    int month2 = m_calendar->monthShown();
+    auto data = m_mainWindow->getMonthData(year2, month2);
 
     QMap<QString, QVector3D> dateMap;
     for (auto &item : data) {
         dateMap[item.first] = item.second;
     }
 
-    QDate firstDay(year, month, 1);
+    QDate firstDay(year2, month2, 1);
     int daysInMonth = firstDay.daysInMonth();
 
     for (int day = 1; day <= daysInMonth; day++) {
-        QDate date(year, month, day);
+        QDate date(year2, month2, day);
         QString key = date.toString("yyyy-MM-dd");
 
         QTextCharFormat fmt;
