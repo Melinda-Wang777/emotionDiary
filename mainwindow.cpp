@@ -16,6 +16,7 @@
 #include "basewindow.h"
 #include <QPainter>
 #include <QLinearGradient>
+#include <QPropertyAnimation>
 
 static bool dbInitialized = false;
 
@@ -69,6 +70,14 @@ void MainWindow::initDatabase()
     query.exec("DELETE FROM capsule_shown");
     //临时加一行方便debug（重新运行程序时清除之前保存的是否弹过胶囊）
     //最后务必注释掉！！！
+
+    //初始化胶囊开关状态（默认开启）
+    QSqlQuery settingsQuery(db);
+    settingsQuery.exec("SELECT last_shown_date FROM capsule_shown WHERE last_shown_date = 'capsule_enabled' OR last_shown_date = 'capsule_disabled'");
+    if (!settingsQuery.next()) {
+        QSqlQuery insertSetting(db);
+        insertSetting.exec("INSERT INTO capsule_shown (last_shown_date) VALUES ('capsule_enabled')");
+    }
 
     dbInitialized = true;
 }
@@ -140,6 +149,64 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_calendarBtn, &QPushButton::clicked, this, &MainWindow::openCalendarWindow);
     connect(m_lineChartsBtn, &QPushButton::clicked, this, &MainWindow::openLineChartsWindow);
 
+    m_menuBtn = new QPushButton("☰", central);
+    m_menuBtn->setFixedSize(36, 36);
+    m_menuBtn->move(354, 10);
+    m_menuBtn->setStyleSheet(
+        "QPushButton {"
+        "  background-color: transparent;"
+        "  color: #2C2C2C;"
+        "  border: none;"
+        "  font-size: 22px;"
+        "}"
+        "QPushButton:hover {"
+        "  background-color: rgba(0,0,0,0.1);"
+        "  border-radius: 18px;"
+        "}"
+        );
+    m_menuBtn->raise();
+
+    initDatabase();
+
+    m_sidebar = new QWidget(central);
+    m_sidebar->setFixedSize(200, 600);
+    m_sidebar->setStyleSheet("background-color: #F5F0E8; border-right: 1px solid #E0D8CC;");
+    m_sidebar->move(-200, 0);
+    m_sidebarVisible = false;
+
+    QLabel *sidebarTitle = new QLabel("设置", m_sidebar);
+    sidebarTitle->setAlignment(Qt::AlignLeft);
+    sidebarTitle->setStyleSheet("font-size: 18px; color: #4A3A2A; padding: 10px;");
+    sidebarTitle->setGeometry(0, 15, 170, 40);
+
+    QWidget *toggleRow = new QWidget(m_sidebar);
+    toggleRow->setGeometry(15, 60, 170, 40);
+    toggleRow->setStyleSheet("background: transparent;");
+
+    QLabel *toggleLabel = new QLabel("是否开启时光胶囊？", toggleRow);
+    toggleLabel->setStyleSheet("font-size: 14px; color: #4A3A2A; background: transparent;");
+    toggleLabel->setGeometry(0, 8, 120, 24);
+
+    m_capsuleToggle = new QPushButton(toggleRow);
+    m_capsuleToggle->setFixedSize(50, 26);
+    m_capsuleToggle->move(125, 7);
+
+    m_capsuleToggle->setCheckable(true);
+    m_capsuleToggle->setChecked(isCapsuleEnabled());
+    m_capsuleToggle->setStyleSheet(
+        "QPushButton {"
+        "  background-color: #CCC;"
+        "  border-radius: 13px;"
+        "  border: none;"
+        "}"
+        "QPushButton:checked {"
+        "  background-color: #A0C4A0;"
+        "}"
+        );
+    connect(m_capsuleToggle, &QPushButton::clicked, this, &MainWindow::onCapsuleToggled);
+
+    connect(m_menuBtn, &QPushButton::clicked, this, &MainWindow::toggleSidebar);
+
     central->setStyleSheet(
         "QPushButton {"
         "  background-color: black;"
@@ -155,8 +222,6 @@ MainWindow::MainWindow(QWidget *parent)
         "  background-color: rgba(44, 44, 44, 0.9);"
         "}"
         );
-
-    initDatabase();
 }
 
 MainWindow::~MainWindow()
@@ -300,6 +365,9 @@ void MainWindow::checkCapsule()
     if (doc.isEmpty())
         return;
 
+    if (!isCapsuleEnabled())
+        return;
+
     QSqlQuery insertQuery(db);
     insertQuery.prepare("INSERT INTO capsule_shown (last_shown_date) VALUES (?)");
     insertQuery.addBindValue(todayStr);
@@ -308,6 +376,7 @@ void MainWindow::checkCapsule()
     // 弹窗
     QVector3D emotion = getEmotionByDate(dateStr);
     QColor color(emotion.x(), emotion.y(), emotion.z());
+
     QMessageBox msgBox;
 
     QPixmap pixmap(32, 32);
@@ -318,7 +387,7 @@ void MainWindow::checkCapsule()
     msgBox.addButton("知道啦", QMessageBox::RejectRole);
     msgBox.setDefaultButton(viewBtn);
 
-    // 添加样式表（在 macOS 上背景色和按钮边框可能生效，至少不会破坏弹窗）
+    //以下设置在macOS上不生效
     msgBox.setStyleSheet(
         "QMessageBox {"
         "  background-color: #F2EBE3;"
@@ -369,4 +438,57 @@ void MainWindow::paintEvent(QPaintEvent* event)
     }
 
     QMainWindow::paintEvent(event);
+}
+
+void MainWindow::toggleSidebar()
+{
+    QPropertyAnimation *anim = new QPropertyAnimation(m_sidebar, "pos", this);
+    anim->setDuration(250);
+    anim->setEasingCurve(QEasingCurve::InOutQuad);
+
+    if (m_sidebarVisible) {
+        anim->setStartValue(QPoint(0, 0));
+        anim->setEndValue(QPoint(-200, 0));
+    } else {
+        anim->setStartValue(QPoint(-200, 0));
+        anim->setEndValue(QPoint(0, 0));
+    }
+
+    anim->start(QAbstractAnimation::DeleteWhenStopped);
+    m_sidebarVisible = !m_sidebarVisible;
+}
+
+void MainWindow::onCapsuleToggled()
+{
+    QSqlDatabase &db = getDatabase();
+    if (!db.isOpen()) return;
+
+    bool currentState = isCapsuleEnabled();
+    bool newState = !currentState;
+
+    QSqlQuery query(db);
+    query.exec("DELETE FROM capsule_shown WHERE last_shown_date = 'capsule_enabled' OR last_shown_date = 'capsule_disabled'");
+    query.prepare("INSERT INTO capsule_shown (last_shown_date) VALUES (?)");
+    query.addBindValue(newState ? "capsule_enabled" : "capsule_disabled");
+    query.exec();
+
+    m_capsuleToggle->setChecked(newState);
+}
+
+bool MainWindow::isCapsuleEnabled()
+{
+    QSqlDatabase &db = getDatabase();
+    if (!db.isOpen()) return true;
+
+    QSqlQuery query(db);
+    query.exec("SELECT last_shown_date FROM capsule_shown WHERE last_shown_date = 'capsule_enabled'");
+    if (query.next()) {
+        return true;
+    }
+    // 不存在 capsule_enabled，检查是否存在 capsule_disabled
+    query.exec("SELECT last_shown_date FROM capsule_shown WHERE last_shown_date = 'capsule_disabled'");
+    if (query.next()) {
+        return false;
+    }
+    return true;//默认开启
 }

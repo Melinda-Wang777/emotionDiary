@@ -28,13 +28,20 @@ private slots:
     void openRecordWindow();
     void openCalendarWindow();
     void openLineChartsWindow();
+    void toggleSidebar();
+    void onCapsuleToggled();
 private:
     void initDatabase();
     void loadEmotion(const QString& date );
     void updatePreview();
     void saveCurrentEmotion();
     void checkCapsule();
-     void paintEvent(QPaintEvent* event) override;
+    void paintEvent(QPaintEvent* event) override;
+    QPushButton *m_menuBtn;
+    QWidget *m_sidebar;
+    bool m_sidebarVisible;
+    QPushButton *m_capsuleToggle;
+    bool isCapsuleEnabled();
 
     QPointer<RecordWindow> m_recordWindow;
     QPointer<CalendarWidget> m_calendarWindow;
