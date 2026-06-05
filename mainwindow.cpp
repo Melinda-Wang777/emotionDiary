@@ -149,7 +149,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_calendarBtn, &QPushButton::clicked, this, &MainWindow::openCalendarWindow);
     connect(m_lineChartsBtn, &QPushButton::clicked, this, &MainWindow::openLineChartsWindow);
 
-    m_menuBtn = new QPushButton("☰", central);
+    m_menuBtn = new QPushButton("☰", this);
     m_menuBtn->setFixedSize(36, 36);
     m_menuBtn->move(354, 10);
     m_menuBtn->setStyleSheet(
