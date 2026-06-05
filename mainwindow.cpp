@@ -67,7 +67,7 @@ void MainWindow::initDatabase()
     query.exec("CREATE TABLE IF NOT EXISTS capsule_shown ("
                "last_shown_date TEXT PRIMARY KEY)");
 
-    query.exec("DELETE FROM capsule_shown");
+    //query.exec("DELETE FROM capsule_shown");
     //临时加一行方便debug（重新运行程序时清除之前保存的是否弹过胶囊）
     //最后务必注释掉！！！
 
@@ -187,23 +187,10 @@ MainWindow::MainWindow(QWidget *parent)
     toggleLabel->setStyleSheet("font-size: 14px; color: #4A3A2A; background: transparent;");
     toggleLabel->setGeometry(0, 8, 120, 24);
 
-    m_capsuleToggle = new QPushButton(toggleRow);
-    m_capsuleToggle->setFixedSize(50, 26);
+    m_capsuleToggle = new ToggleSwitch(toggleRow);
     m_capsuleToggle->move(125, 7);
-
-    m_capsuleToggle->setCheckable(true);
     m_capsuleToggle->setChecked(isCapsuleEnabled());
-    m_capsuleToggle->setStyleSheet(
-        "QPushButton {"
-        "  background-color: #CCC;"
-        "  border-radius: 13px;"
-        "  border: none;"
-        "}"
-        "QPushButton:checked {"
-        "  background-color: #A0C4A0;"
-        "}"
-        );
-    connect(m_capsuleToggle, &QPushButton::clicked, this, &MainWindow::onCapsuleToggled);
+    connect(m_capsuleToggle, &ToggleSwitch::toggled, this, &MainWindow::onCapsuleToggled);
 
     connect(m_menuBtn, &QPushButton::clicked, this, &MainWindow::toggleSidebar);
 
@@ -373,7 +360,6 @@ void MainWindow::checkCapsule()
     insertQuery.addBindValue(todayStr);
     insertQuery.exec();
 
-    // 弹窗
     QVector3D emotion = getEmotionByDate(dateStr);
     QColor color(emotion.x(), emotion.y(), emotion.z());
 
@@ -387,7 +373,7 @@ void MainWindow::checkCapsule()
     msgBox.addButton("知道啦", QMessageBox::RejectRole);
     msgBox.setDefaultButton(viewBtn);
 
-    //以下设置在macOS上不生效
+    //注：以下设置在macOS上不生效
     msgBox.setStyleSheet(
         "QMessageBox {"
         "  background-color: #F2EBE3;"
@@ -471,8 +457,6 @@ void MainWindow::onCapsuleToggled()
     query.prepare("INSERT INTO capsule_shown (last_shown_date) VALUES (?)");
     query.addBindValue(newState ? "capsule_enabled" : "capsule_disabled");
     query.exec();
-
-    m_capsuleToggle->setChecked(newState);
 }
 
 bool MainWindow::isCapsuleEnabled()
@@ -485,7 +469,7 @@ bool MainWindow::isCapsuleEnabled()
     if (query.next()) {
         return true;
     }
-    // 不存在 capsule_enabled，检查是否存在 capsule_disabled
+
     query.exec("SELECT last_shown_date FROM capsule_shown WHERE last_shown_date = 'capsule_disabled'");
     if (query.next()) {
         return false;
